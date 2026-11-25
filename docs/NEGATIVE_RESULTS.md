@@ -1,0 +1,27 @@
+# Negative Results & Falsified Hypotheses Ledger
+
+To promote scientific transparency and prevent wasted engineering effort in trustworthy AIOps research, this ledger documents the primary hypotheses that were **empirically falsified** during the development and evaluation of PROVE on the carrier backbone dataset (D1) and our prototype verification suite.
+
+| # | Falsified Hypothesis / Attempted Intervention | Measured Outcome | Root Cause / Takeaway |
+|---|---|---|---|
+| **N1** | **Cross-segment monotone quantile alignment** fixes $S_2$ transfer collapse | $S_2$ score **21.04** vs. unaligned **42.74** (even though $p_{999}$ aligned within 2%) | Pointwise monotone maps preserve marginal loudness but cannot restore contracted temporal autocorrelation / signal-to-noise ratio (`iface` excursion $0.18\times$, `scrape` $0.59\times$). |
+| **N2** | **Port-feature removal** cures NetFlow port-table drift ($16 \to 27$ ports) | `models_noport` (0 port cols): $S_0$ 88.44, $S_2$ **40.85** vs. `models_selrawo` (238 cols): $S_0$ 89.11, $S_2$ **40.99** | Removing 244 port/log columns left degraded performance virtually unchanged; port drift was not the bottleneck. |
+| **N3** | **Transplanting anchor `9|route` calibration** ($12.86\times$ level gap) rescues routing recall | Routing share *dropped* 12.2% $\to$ 9.7%; firewall share rose 65% $\to$ 69%; surrogate A/B non-monotonic ($\pm 0.86$ pts, $\pm 4$ TP) | The $12.86\times$ gap is an estimator artifact at the zero-inflated $q_{90}$ tail; `route` threshold is an inert knob (2000$\times$ sweep moves win-share only $0.0281 \to 0.0077$). |
+| **N4** | **Per-region calibration** removes $102\times$ regional level heterogeneity | Pooled amplification spans $4.2\times$ (`shenyang`) to $425.8\times$ (`shanghai`), yet `pred/truth` stays $0.98\text{--}1.04$ (Spearman $r=-0.708$) | Pooled calibration induces zero positive regional detection bias. |
+| **N5** | **Anchor-segment optimization transfers monotonically** to degraded $S_2$ | Raising anchor $S_0$ from $63.43 \to 73.19$ ($+9.76$) raised $S_2$ only $21.04 \to 22.63$ ($+1.59$); anchor-optimal $E=400$ dropped $S_2$ to **18.05** | Surrogates are structurally blind to $\Delta_{\text{composition}}$; anchor-optimal emission budgets do not transfer across fault mixes. |
+| **N6** | **Precision-axis filtering** (rank truncation / $\ge 20$ min gap prior) rescues low-recall $S_2$ | Rank truncation $q=0.90$ drops $S_2$ $40.54 \to 37.57$ (retention $\approx q$); $\ge 20$ min gap yields only $+0.05$; oracle-precision upper bound is $43.95$ | True positives are nearly uniform near the rank cutoff; precision filtering reduces $T$ and $E$ proportionally without lifting precision. |
+| **N7** | **Truth-like window tightening** (`cross_level` $0.5 \to 0.7$, or adding $L=14$ grid scale) improves score | `cross_level=0.7` costs **$-6.13$** pts ($52.43 \to 46.30$); adding $14/7$ grid scale lowers `base+grid` $59.68 \to 59.41$ | Protocol rewards Dice $\ge 0.4$ match rate, not visual closeness to median duration; high-Dice $L=14$ grid windows displace high-quality base records. |
+| **N8** | **Time-gap deduplication ($\ge 20$ min)** when fusing multi-mechanism detectors | Full union ($E=1673$) **43.79** beats deduplicated union ($E=853$) **41.75** ($-2.04$ pts) | Novel hit rate is independent of temporal proximity ($1.35\%$ kept vs. $1.16\%$ overall); deduplication discards true positives. |
+| **N9** | **Sub-minute NetFlow boundary refinement** & **expanded hypothesis family ($36 \to 66$)** | Sub-minute refinement costs **$-4.27$** AD pts; expanded hypothesis family drops selector $0.787 \to 0.767$ | Flow timestamps do not coincide with injection boundaries; larger hypothesis sets suffer a winner's curse where selection overhead outweighs niche oracle gains. |
+| **N10** | **Replacing GBDT with TCN boundary model** or **16-config hyperparameter sweep** | TCN reached only $0.42$ recall; 16-config selector sweep gained $\le +0.0042$ offline Dice | Supports Design Principle G2: evidence-plane engineering and training-set construction dominate learner complexity. |
+
+## Silent Engineering Defects Fixed During Refactoring
+
+Ten silent data-corruption defects were uncovered and eliminated in `src/` (detailed in `docs/archive_zh/`):
+1. **64 KB fixed-buffer encoding probe** split multi-byte UTF-8 characters mid-sequence, causing random per-file fallback to GBK (`src/rawio.py`).
+2. **Naive `*_count` counter differencing** zeroed negative drops on `bgp_peer_count` (destroying BGP session-down signals); replaced with `*_total` + empirical monotonicity check (`src/build_cache.py`).
+3. **Peak-row role aliasing** labeled all 10 region elements with `pk.role`, collapsing `role_top1 == role_top5` (fixing lifted `role_top1` $0.406 \to 0.707$, `role_top5` $\to 0.984$).
+4. **Target leakage (`cat_idx`)** and **time-of-day memorization (`tod_sin`/`tod_cos`)** removed via pre-labeling feature-column locking (`src/train.py`).
+5. **Sub-minute ground-truth timestamp mismatch** in `to_midx()` silently dropped all labels; fixed via `.floor("1min")` (`src/config.py`).
+6. **Segment-boundary exclusive end-time rendering** created a 10,083-minute cross-batch interval; fixed via `grid[t1-1] + 1 min` (`src/config.py`).
+7. **Vacuous E1b sentinel gate** scored a frozen Segment-0 shard instead of the unified model; fixed via `e1b_is_vacuous()` sentinel-subject isolation (`src/verify.py`).

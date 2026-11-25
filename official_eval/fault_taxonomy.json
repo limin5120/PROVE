@@ -1,0 +1,39 @@
+{
+  "major_categories": [
+    "routing",
+    "firewall",
+    "link",
+    "resource",
+    "service"
+  ],
+  "fault_categories": [
+    {"major_category": "routing", "sub_category": "bgp_session_down"},
+    {"major_category": "routing", "sub_category": "bgp_flap"},
+    {"major_category": "routing", "sub_category": "bgp_route_leak"},
+    {"major_category": "routing", "sub_category": "bgp_prefix_limit"},
+    {"major_category": "routing", "sub_category": "ospf_neighbor_down"},
+    {"major_category": "routing", "sub_category": "ospf_metric_change"},
+    {"major_category": "firewall", "sub_category": "port_block"},
+    {"major_category": "firewall", "sub_category": "acl_drop"},
+    {"major_category": "firewall", "sub_category": "rate_limit"},
+    {"major_category": "firewall", "sub_category": "conntrack_exhaustion"},
+    {"major_category": "firewall", "sub_category": "policy_misconfig"},
+    {"major_category": "link", "sub_category": "link_down"},
+    {"major_category": "link", "sub_category": "packet_loss"},
+    {"major_category": "link", "sub_category": "high_latency"},
+    {"major_category": "link", "sub_category": "bandwidth_limit"},
+    {"major_category": "link", "sub_category": "jitter_spike"},
+    {"major_category": "link", "sub_category": "mtu_mismatch"},
+    {"major_category": "resource", "sub_category": "cpu_saturation"},
+    {"major_category": "resource", "sub_category": "memory_exhaustion"},
+    {"major_category": "resource", "sub_category": "disk_io_saturation"},
+    {"major_category": "resource", "sub_category": "fd_exhaustion"},
+    {"major_category": "resource", "sub_category": "inode_exhaustion"},
+    {"major_category": "resource", "sub_category": "swap_thrashing"},
+    {"major_category": "service", "sub_category": "dns_failure"},
+    {"major_category": "service", "sub_category": "web_unavailable"},
+    {"major_category": "service", "sub_category": "ntp_drift"},
+    {"major_category": "service", "sub_category": "db_hang"},
+    {"major_category": "service", "sub_category": "process_crash"}
+  ]
+}

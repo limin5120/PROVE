@@ -1,0 +1,23 @@
+[build-system]
+requires = ["setuptools>=68.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "prove-fault-diagnosis"
+version = "1.0.0"
+description = "PROVE: Trustworthy Full-Stack Fault Diagnosis and Verification under Degraded Observability (BlockSys'2027 Artifact)"
+readme = "README.md"
+license = {text = "MIT"}
+requires-python = ">=3.10"
+authors = [
+  {name = "Chen Wang", email = "uestc_wc@163.com"},
+  {name = "Min Li", email = "limin258@alumni.sysu.edu.cn"},
+]
+dependencies = [
+  "numpy>=1.26.0",
+  "pandas>=2.1.0",
+  "scipy>=1.11.0",
+]
+
+[project.optional-dependencies]
+train = ["lightgbm>=4.1.0", "pyarrow>=14.0.0", "scikit-learn>=1.3.0"]

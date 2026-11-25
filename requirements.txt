@@ -1,0 +1,9 @@
+# Core dependencies (required for prototype verification, evaluator, and L0-L1 pipeline)
+numpy>=1.26.0
+pandas>=2.1.0
+scipy>=1.11.0
+
+# Optional dependencies (required only for retraining LightGBM heads or reading Parquet caches)
+# lightgbm>=4.1.0
+# pyarrow>=14.0.0
+# scikit-learn>=1.3.0
